@@ -1,0 +1,12 @@
+.overlay
+{
+  position:absolute;
+    top:0;
+    left:50%;
+  background-color:"pink";
+  
+ } 
+.hidden
+{
+  display:none;
+ } 
