@@ -1,21 +1,37 @@
 <!doctype html>
 <html>
-  <head>
-    <title>This is the title of the webpage!</title>
- <script src="./script.js"></script>
-  </head>
+
+<head>
+  <title>Dart Fruit</title>
+  <meta content="text/html; charset=utf-8" />
+  <script src="./script.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="startGame()">
+
+
+  <canvas id="canvas" width=500 height=300></canvas>
+ 
+  <dialog id="overlay" class="">
+    <h1> Game Over </h1>
+    <h2> Score: <strong id="score"></score>
+    </h2>
+    <p>Your prize is a:</p>
+    <p id="message"></p>
+    <label for="topScoreTable">Top Scores:</label>
+    <ul id="topScoreTable">
+
+    </ul>
+    <div id="highScore" class="">
+    <label for="name">Enter Your Name:</label>
+    <input type="text" id="name" name="name" maxlength="5">
+    </div>
+
+    <button id="confirmBtn" value="default" onclick="closeOverlay()">Play Again</button>
+  </dialog>
+
   
-  <body>
-    
-    
-<canvas id="canvas" width=500 height=300 ></canvas >
-<div id="overlay" class="overlay" />
-<h1> Game Over </h1>
-<h2> Score: <strong id="score" ></score></h2>
-<p id="message"></p>
-<ul id="topScores" >
-  </ul>
-<button onclick="closeOverlay()" >Play Again</button>
-</div>
-      </body>
+</body>
+
 </html>

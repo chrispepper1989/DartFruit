@@ -1,19 +1,86 @@
 
+var pauseGame = false;
 function startGame() {
-    var gameoverlay = document.getElementById("overlay");
+    var modal = document.getElementById("overlay");
     var scoreDisplay = document.getElementById("score");
     var messageDisplay = document.getElementById("message");
-    var topScoreDisplay = document.getElementById("topScores");
+    var topScoreDisplay = document.getElementById("topScoreTable");
     var topScores = [0, 0, 0, 0, 0];
     var topScoreNames = ["", "", "", "", ""];
-    var pauseGame = false;
-    function onWin(score, message) {
-        gameoverlay.classList.remove("hidden");
+    function updateHighScoreDisplay() {
+        topScoreDisplay.innerHTML = "";
+        for (var i = 0; i < topScores.length; ++i) {
+            topScoreDisplay.innerHTML += "<li>".concat(topScoreNames[i], " : ").concat(topScores[i], "</li>");
+        }
+    }
+    function updateHighScores(name, score) {
+        for (var i = 0; i < topScores.length; ++i) {
+            if (score > topScores[i]) {
+                topScores[i] = score;
+                topScoreNames[i] = name;
+                break;
+            }
+        }
+        updateHighScoreDisplay();
+    }
+    modal.addEventListener('close', function (e) {
+        console.log(modal.returnValue);
+        updateHighScores(modal.returnValue, score);
+        // Reset the game state and variables
+        score = 0;
+        angle = 0;
+        direction = 1;
+        stickAngle = Math.PI / 2;
+        stickX = circleX;
+        stickX = circleX;
+        stickY = canvas.height - stickLength;
+        stickFired = false;
+        stickHit = false;
+        hitSticks = [];
+    });
+    function onWin() {
+        var message; // declare a variable to store the message
+        // assign points to some value between 5 and 40
+        var points = score;
+        // assign points to some value between 0 and 40
+        switch (true) {
+            case points < 5:
+                message = "High five";
+                break;
+            case points < 10:
+                message = "Compliment";
+                break;
+            case points < 15:
+                message = "Joke";
+                break;
+            case points < 20:
+                message = "Dance move";
+                break;
+            case points < 25:
+                message = "Secret handshake";
+                break;
+            case points < 30:
+                message = "Funny face";
+                break;
+            case points < 35:
+                message = "Magic trick";
+                break;
+            case points <= 40:
+                message = "Shout out";
+                break;
+            default:
+                message = "Invalid points";
+        }
+        console.log("game over");
+        console.log(message); // print the message
+        updateHighScoreDisplay();
         scoreDisplay.innerHTML = "".concat(score);
         messageDisplay.innerHTML = message;
+        modal.showModal();
         pauseGame = true;
     }
-    
+    closeOverlay();
+    updateHighScoreDisplay();
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
     // Set the canvas width and height to fill the window
@@ -31,7 +98,6 @@ function startGame() {
     var angle = 0; // The current angle of the circle
     var direction = 1; // The current direction of the circle rotation (1 or -1)
     var score = 0; // The
-    var lastMessage = "hi";
     // The current angle of the stick
     var stickAngle = Math.PI / 2; // The stick starts at the bottom middle of the screen
     // The current position of the stick
@@ -110,7 +176,6 @@ function startGame() {
         ctx.translate(x, y);
         ctx.rotate(angle + Math.PI); //* Math.PI / 180);
         ctx.translate(-6, 0);
-        //ctx.rotate(90);
         // Draw the dart body as a rectangle
         ctx.fillStyle = "black";
         ctx.fillRect(-10, -2, 20, 4);
@@ -138,57 +203,10 @@ function startGame() {
     // Define a function to draw a stick (cocktail stick)
     function drawStick(x, y, angle) {
         drawDart(ctx, x, y, angle);
-
     }
     function gameOver() {
-        var message; // declare a variable to store the message
-        // assign points to some value between 5 and 40
-        var points = score;
-        // assign points to some value between 0 and 40
-        switch (true) {
-            case points < 5:
-                message = "High five";
-                break;
-            case points < 10:
-                message = "Compliment";
-                break;
-            case points < 15:
-                message = "Joke";
-                break;
-            case points < 20:
-                message = "Dance move";
-                break;
-            case points < 25:
-                message = "Secret handshake";
-                break;
-            case points < 30:
-                message = "Funny face";
-                break;
-            case points < 35:
-                message = "Magic trick";
-                break;
-            case points <= 40:
-                message = "Shout out";
-                break;
-            default:
-                message = "Invalid points";
-        }
-        console.log(message); // print the message
-        // onWin(points, message)
-        // Game over
-        alert("Game over! Your score is " + score + " you win a " + message);
-        console.log("game over");
-        // Reset the game state and variables
-        score = 0;
-        angle = 0;
-        direction = 1;
-        stickAngle = Math.PI / 2;
-        stickX = circleX;
-        stickX = circleX;
-        stickY = canvas.height - stickLength;
-        stickFired = false;
-        stickHit = false;
-        hitSticks = [];
+        // Game over  
+        onWin();
     }
     // Define a function to update the game logic
     function update() {
@@ -231,7 +249,6 @@ function startGame() {
                     //if (Math.abs(relativeAngle - hitStick) < Math.PI / 180)
                     var compAngle = Math.floor((relativeAngle + 10) * 100);
                     var hitComp = Math.floor((hitStick + 10) * 100);
-                    lastMessage = "angle" + compAngle + " hit" + hitComp;
                     if (compAngle > hitComp - tolerance &&
                         compAngle < hitComp + tolerance) {
                         gameOver();
@@ -270,10 +287,12 @@ function startGame() {
     }
     // Define a function to handle the game loop
     function gameLoop() {
-        // Update the game logic
-        update();
-        // Render the game graphics
-        render();
+        if (!pauseGame) {
+            // Update the game logic
+            update();
+            // Render the game graphics
+            render();
+        }
         // Request the next animation frame
         requestAnimationFrame(gameLoop);
     }
@@ -293,7 +312,11 @@ function startGame() {
 }
 //gameoverlay.classList.add("hidden");
 function closeOverlay() {
-    document.getElementById("overlay").classList.add("hidden");
-    startGame();
+    // document.getElementById("overlay").classList.add("hidden");
+    var modal = document.getElementById("overlay");
+    var input = document.getElementById('name');
+    modal.close(input.value);
+    pauseGame = false;
+    //startGame();
 }
-
+exports.closeOverlay = closeOverlay;
